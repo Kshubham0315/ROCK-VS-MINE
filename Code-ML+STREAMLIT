@@ -1,0 +1,56 @@
+import streamlit as st
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+st.set_page_config(page_title="Sonar Object Classifier", layout="centered")
+
+# Title
+st.title("Sonar Object Classifier (Rock vs Mine)")
+st.write("Upload sonar dataset and enter values to check whether object is a **Rock** or a **Mine**")
+
+# Loading dataset into pandas dataframe
+uploaded_file = st.file_uploader("Upload 'Copy of sonar data.csv'", type=['csv'])
+
+if uploaded_file is not None:
+    sonar_data = pd.read_csv(uploaded_file, header=None)
+    
+    # Preprocessing of the dataset
+    X = sonar_data.drop(columns=60, axis=1)
+    Y = sonar_data[60]
+
+    # Train-test split
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, stratify=Y, random_state=1)
+
+    # Model training using logisticregression
+    model = LogisticRegression(max_iter=1000)
+    model.fit(X_train, Y_train)
+
+    # find out the accuracy of the model
+    training_accuracy = accuracy_score(model.predict(X_train), Y_train)
+    test_accuracy = accuracy_score(model.predict(X_test), Y_test)
+
+    st.success(f"Model trained successfully!")
+    st.write(f"Training Accuracy: **{training_accuracy:.2f}**")
+    st.write(f"Test Accuracy: **{test_accuracy:.2f}**")
+
+    # Input section
+    st.subheader("Enter 60 input features:")
+    input_data = []
+    for i in range(60):
+        val = st.number_input(f"Feature {i+1}", key=f"f{i}")
+        input_data.append(val)
+
+    if st.button("Predict"):
+        input_np = np.asarray(input_data).reshape(1, -1)
+        prediction = model.predict(input_np)
+
+        if prediction[0] == 'R':
+            st.error("The object is a **Rock**")
+        else:
+            st.success("The object is a **Mine**")
+
+else:
+    st.info("Please upload the dataset file to start.")
