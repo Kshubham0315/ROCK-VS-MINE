@@ -37,8 +37,7 @@ This is a machine learning web app built with **Streamlit** that predicts whethe
 
 ## 🔗 Live App
 
-👉 [Click here to use the app](https://your-app-name.streamlit.app)  
-_(Replace this link with your Streamlit Cloud deployment link)_
+👉 [Click here to use the app](http://localhost:8501/)  
 
 ---
 
